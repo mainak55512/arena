@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 typedef struct Arena {
-	void *data;
+	void *region;
 	size_t size;
 	size_t capacity;
 	struct Arena *next;
@@ -12,7 +12,7 @@ typedef struct Arena {
 Arena *arena_init(size_t capacity) {
 	Arena *arena = (Arena *)malloc(sizeof(Arena));
 	void *data = malloc(capacity);
-	arena->data = data;
+	arena->region = data;
 	arena->capacity = capacity;
 	arena->size = 0;
 	arena->next = NULL;
@@ -22,19 +22,20 @@ Arena *arena_init(size_t capacity) {
 void *arena_alloc(Arena *arena, size_t size) {
 	Arena *current_arena = arena;
 	void *data = NULL;
-	if (current_arena->capacity < size) {
-		Arena *new_arena = arena_init(size);
-		current_arena->next = new_arena;
-		data = arena_alloc(new_arena, size);
-	} else if (current_arena->size + size <= current_arena->capacity) {
-		data = (char *)current_arena->data + current_arena->size;
+	if (current_arena->size + size <= current_arena->capacity) {
+		data = (char *)current_arena->region + current_arena->size;
 		current_arena->size += size;
 	} else {
 		if (current_arena->next != NULL) {
 			current_arena = current_arena->next;
 			data = arena_alloc(current_arena, size);
 		} else {
-			Arena *new_arena = arena_init(arena->capacity);
+			Arena *new_arena = NULL;
+			if (current_arena->capacity < size) {
+				new_arena = arena_init(size);
+			} else {
+				new_arena = arena_init(arena->capacity);
+			}
 			current_arena->next = new_arena;
 			data = arena_alloc(new_arena, size);
 		}
@@ -46,7 +47,7 @@ void arena_free(Arena *arena) {
 	if (arena->next != NULL) {
 		arena_free(arena->next);
 	}
-	free(arena->data);
+	free(arena->region);
 	free(arena);
 	return;
 }
