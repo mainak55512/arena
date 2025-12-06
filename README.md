@@ -4,6 +4,7 @@ A lightweight arena-style memory allocator for C projects.
 
 ## Features
 - Simple initialization with a fixed capacity
+- Automatically allocates memory if capacity is full
 - Fast linear allocations using a pre-allocated buffer
 - One-shot memory release via `arena_free()`
 - C89 compatible
@@ -16,6 +17,9 @@ A lightweight arena-style memory allocator for C projects.
 
 ### Build Steps
 1. Clone the repository in your project root.
+    ```sh
+    git clone https://github.com/mainak55512/arena.git
+    ```
 2. In your `CMakeLists.txt` add the following lines:
     ```cmake
     target_include_directories(${PROJECT_NAME} PRIVATE arena/include)
@@ -27,7 +31,22 @@ A lightweight arena-style memory allocator for C projects.
     cd build
     cmake ..
     make
+    ./your-executable
     ```
+
+## Sample CMakeLists.txt
+
+```cmake
+    cmake_minimum_required(VERSION 3.10)
+    project(arena_test)
+
+    add_executable(${PROJECT_NAME} main.c)
+
+    target_include_directories(${PROJECT_NAME} PRIVATE arena/include)
+    add_library(arena STATIC arena/lib/arena.c)
+    target_link_libraries(${PROJECT_NAME} PRIVATE arena)
+```
+
 ## Example
 
 ```c
@@ -44,10 +63,10 @@ void coordinates(Point *point) {
 }
 
 int main() {
-    // Create an Arena
+	// Create an Arena
 	Arena *arena = arena_init(1024);
 
-    // Allocate on the arena, if the capacity is full it will automatically allocate new arena
+	// Allocate on the arena, if the capacity is full it will automatically allocate new arena
 	float *a = (float *)arena_alloc(arena, sizeof(float));
 	float *b = (float *)arena_alloc(arena, sizeof(float));
 
@@ -65,7 +84,7 @@ int main() {
 	coordinates(p);
 	coordinates(p1);
 
-    // Free the arena, it will free all the allocations done on it
+	// Free the arena, it will free all the allocations done on it
 	arena_free(arena);
 }
 ```
