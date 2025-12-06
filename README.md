@@ -18,8 +18,8 @@ A lightweight arena-style memory allocator for C projects.
 1. Clone the repository in your project root.
 2. In your `CMakeLists.txt` add the following lines:
     ```cmake
-    target_include_directories(${PROJECT_NAME} PRIVATE Arena/include)
-    add_library(arena STATIC Arena/lib/arena.c)
+    target_include_directories(${PROJECT_NAME} PRIVATE arena/include)
+    add_library(arena STATIC arena/lib/arena.c)
     target_link_libraries(${PROJECT_NAME} PRIVATE arena)
     ```
 3. ```sh
