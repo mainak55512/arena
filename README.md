@@ -64,27 +64,39 @@ void coordinates(Point *point) {
 
 int main() {
 	// Create an Arena
-	Arena *arena = arena_init(1024);
+	Arena *arena = arena_init(100);
 
 	// Allocate on the arena, if the capacity is full it will automatically allocate new arena
-	float *a = (float *)arena_alloc(arena, sizeof(float));
-	float *b = (float *)arena_alloc(arena, sizeof(float));
+	// Allocating for 10 integers
+	int *arr = (int *)arena_alloc(arena, 10 * sizeof(int));
+	for (int i = 0; i < 10; i++) {
+		arr[i] = (i * 2) + 10;
+	}
+	printf("Int Arr: ");
+	for (int i = 0; i < 10; i++) {
+		printf("%d, ", arr[i]);
+	}
+	printf("\n");
 
+	// Allocating for 10 floats
+	float *arr1 = (float *)arena_alloc(arena, 10 * sizeof(float));
+	for (int i = 0; i < 10; i++) {
+		arr1[i] = (i * 2.5f) + 10;
+	}
+	printf("Float Arr: ");
+	for (int i = 0; i < 10; i++) {
+		printf("%f, ", arr1[i]);
+	}
+	printf("\n");
+
+	// Allocating for Point struct
 	Point *p = (Point *)arena_alloc(arena, sizeof(Point));
-	Point *p1 = (Point *)arena_alloc(arena, sizeof(Point));
-
-	*a = 5.33f;
-	*b = 6.34f;
-	p->x = *a;
-	p->y = *b;
-
-	p1->x = *b;
-	p1->y = *a;
+	p->x = 2.34f;
+	p->y = 5.46f;
 
 	coordinates(p);
-	coordinates(p1);
 
-	// Free the arena, it will free all the allocations done on it
+	// Free the arena, it will free all the allocations done on it i.e. arr, arr1 & p
 	arena_free(arena);
 }
 ```
