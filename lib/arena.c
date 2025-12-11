@@ -46,11 +46,16 @@ void *arena_alloc(Arena *arena, size_t size) {
 	return data;
 }
 
-void arena_free(Arena *arena) {
-	if (arena->next != NULL) {
-		arena_free(arena->next);
+void arena_free(Arena **arena) {
+	if (*arena == NULL) {
+		return;
 	}
-	free(arena->region);
-	free(arena);
+	if ((*arena)->next != NULL) {
+		arena_free(&(*arena)->next);
+	}
+	free((*arena)->region);
+	(*arena)->region = NULL;
+	free(*arena);
+	*arena = NULL;
 	return;
 }

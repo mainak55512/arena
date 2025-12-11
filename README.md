@@ -97,6 +97,6 @@ int main() {
 	coordinates(p);
 
 	// Free the arena, it will free all the allocations done on it i.e. arr, arr1 & p
-	arena_free(arena);
+	arena_free(&arena);
 }
 ```
