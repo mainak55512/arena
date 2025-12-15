@@ -1,5 +1,24 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+typedef union {
+	char c;
+	short s;
+	int i;
+	long l;
+	float f;
+	double d;
+	void *p;
+	void (*fp)(void);
+} MaxAlign;
+
+struct AlignMax {
+	char c;
+	MaxAlign m;
+};
+
+#define MAX_ALIGN offsetof(struct AlignMax, m)
 
 typedef struct Arena {
 	void *region;
@@ -20,7 +39,8 @@ void *m_align_alloc(size_t capacity) {
 	char *aligned_ptr;
 	char **head;
 
-	alignment = 8;
+	alignment = MAX_ALIGN;
+
 	header_size = sizeof(void *);
 
 	/*
