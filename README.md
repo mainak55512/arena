@@ -62,10 +62,14 @@ int main() {
 
 	// Allocate memory on arena
 	double *num = (double *)arena_alloc(arena, sizeof(double));
+	double *num1 = (double *)arena_alloc(arena, sizeof(double));
+	double *num2 = (double *)arena_alloc(arena, sizeof(double));
+	double *num3 = (double *)arena_alloc(arena, sizeof(double));
+	double *num4 = (double *)arena_alloc(arena, sizeof(double));
 
 	*num = 11.22;
 
-	printf("Num: %f", *num);
+	printf("Num: %f\n", *num);
 
 	// Free the arena
 	arena_free(&arena);
