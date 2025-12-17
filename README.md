@@ -7,6 +7,7 @@ A lightweight arena-style memory allocator for C projects.
 - Automatically allocates memory if capacity is full
 - Fast linear allocations using a pre-allocated buffer
 - One-shot memory release via `arena_free()`
+- Create pool of arenas
 - C89 compatible
 
 ## Building & Installing
@@ -53,50 +54,49 @@ A lightweight arena-style memory allocator for C projects.
 #include <arena.h>
 #include <stdio.h>
 
-typedef struct {
-	float x;
-	float y;
-} Point;
-
-void coordinates(Point *point) {
-	printf("Coordinates -> x: %f, y: %f\n", point->x, point->y);
-}
-
 int main() {
-	// Create an Arena
-	Arena *arena = arena_init(100);
+	// Normal Arena
+	// --------------------
+	// Initialize the arena
+	Arena *arena = arena_init(20);
 
-	// Allocate on the arena, if the capacity is full it will automatically allocate new arena
-	// Allocating for 10 integers
-	int *arr = (int *)arena_alloc(arena, 10 * sizeof(int));
-	for (int i = 0; i < 10; i++) {
-		arr[i] = (i * 2) + 10;
-	}
-	printf("Int Arr: ");
-	for (int i = 0; i < 10; i++) {
-		printf("%d, ", arr[i]);
-	}
-	printf("\n");
+	// Allocate memory on arena
+	double *num = (double *)arena_alloc(arena, sizeof(double));
 
-	// Allocating for 10 floats
-	float *arr1 = (float *)arena_alloc(arena, 10 * sizeof(float));
-	for (int i = 0; i < 10; i++) {
-		arr1[i] = (i * 2.5f) + 10;
-	}
-	printf("Float Arr: ");
-	for (int i = 0; i < 10; i++) {
-		printf("%f, ", arr1[i]);
-	}
-	printf("\n");
+	*num = 11.22;
 
-	// Allocating for Point struct
-	Point *p = (Point *)arena_alloc(arena, sizeof(Point));
-	p->x = 2.34f;
-	p->y = 5.46f;
+	printf("Num: %f", *num);
 
-	coordinates(p);
-
-	// Free the arena, it will free all the allocations done on it i.e. arr, arr1 & p
+	// Free the arena
 	arena_free(&arena);
+
+	// Arena Pool
+	// ----------------------
+	// Create the Pool
+	Pool *p = create_arena_pool();
+
+	// Allocate arenas on the pool
+	Arena *arena1 = arena_pool_init(p, 100);
+	Arena *arena2 = arena_pool_init(p, 150);
+
+	// Allocate memory on the arenas, `arena_pool_alloc` is essentially 
+	// a wrapper around `arena_alloc`
+	int *a = (int *)arena_pool_alloc(arena1, sizeof(int) * 10);
+	int *b = (int *)arena_pool_alloc(arena1, sizeof(int) * 10);
+
+	int *c = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
+	int *d = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
+	int *e = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
+
+	*a = 5;
+	*d = *a * 3;
+
+	printf("A: %d, D: %d\n", *a, *d);
+
+	// Free individual arenas
+	arena_pool_free(p, &arena1);
+
+	// Free all arenas in a pool
+	arena_pool_destroy(p);
 }
 ```

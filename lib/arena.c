@@ -27,6 +27,11 @@ typedef struct Arena {
 	struct Arena *next;
 } Arena;
 
+typedef struct Pool {
+	Arena **pool;
+	size_t size;
+} Pool;
+
 void *m_align_alloc(size_t capacity) {
 	size_t alignment;
 	size_t header_size;
@@ -175,4 +180,56 @@ void arena_free(Arena **arena) {
 	m_align_free(*arena);
 	*arena = NULL;
 	return;
+}
+
+Pool *create_arena_pool() {
+	Pool *pool;
+	Arena **pool_arr;
+	pool = (Pool *)m_align_alloc(sizeof(Pool));
+	pool_arr = (Arena **)m_align_alloc(sizeof(Arena *) * 100);
+	if (pool_arr == NULL) {
+		fprintf(stderr, "Fatal: Failed to allocate pool");
+		abort();
+	}
+	pool->pool = pool_arr;
+	pool->size = 0;
+	return pool;
+}
+
+Arena *arena_pool_init(Pool *pool, size_t capacity) {
+	Arena *alloc_addr;
+	alloc_addr = arena_init(capacity);
+	*(pool->pool + pool->size) = alloc_addr;
+	pool->size++;
+	return alloc_addr;
+}
+
+void *arena_pool_alloc(Arena *arena, size_t size) {
+	return arena_alloc(arena, size);
+}
+
+void arena_pool_free(Pool *pool, Arena **arena) {
+	int i;
+	if (pool == NULL || pool->pool == NULL || arena == NULL || *arena == NULL)
+		return;
+	for (i = 0; i < pool->size; i++) {
+		if (*(pool->pool + i) == *arena) {
+			arena_free(&*(pool->pool + i));
+			*arena = NULL;
+			return;
+		}
+	}
+}
+
+void arena_pool_destroy(Pool *pool) {
+	int i;
+	for (i = 0; i < pool->size; i++) {
+		if (*(pool->pool + i) != NULL) {
+			arena_free(&*(pool->pool + i));
+		}
+	}
+	m_align_free(pool->pool);
+	pool->pool = NULL;
+	m_align_free(pool);
+	pool = NULL;
 }
