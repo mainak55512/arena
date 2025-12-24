@@ -7,7 +7,6 @@ A lightweight arena-style memory allocator for C projects.
 - Automatically allocates memory if capacity is full
 - Fast linear allocations using a pre-allocated buffer
 - One-shot memory release via `arena_free()`
-- Create pool of arenas
 - C89 compatible
 
 ## Building & Installing
@@ -71,36 +70,13 @@ int main() {
 
 	printf("Num: %f\n", *num);
 
+	arena_reset(&arena);
+
+	double *num_new = (double *)arena_alloc(arena, sizeof(double));
+
+	printf("Num_new: %f\n", *num_new);
+
 	// Free the arena
 	arena_free(&arena);
-
-	// Arena Pool
-	// ----------------------
-	// Create the Pool
-	Pool *p = create_arena_pool();
-
-	// Allocate arenas on the pool
-	Arena *arena1 = arena_pool_init(p, 100);
-	Arena *arena2 = arena_pool_init(p, 150);
-
-	// Allocate memory on the arenas, `arena_pool_alloc` is essentially 
-	// a wrapper around `arena_alloc`
-	int *a = (int *)arena_pool_alloc(arena1, sizeof(int) * 10);
-	int *b = (int *)arena_pool_alloc(arena1, sizeof(int) * 10);
-
-	int *c = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
-	int *d = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
-	int *e = (int *)arena_pool_alloc(arena2, sizeof(int) * 10);
-
-	*a = 5;
-	*d = *a * 3;
-
-	printf("A: %d, D: %d\n", *a, *d);
-
-	// Free individual arenas
-	arena_pool_free(p, &arena1);
-
-	// Free all arenas in a pool
-	arena_pool_destroy(p);
 }
 ```

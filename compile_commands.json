@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/mainak/programs/Arena/build",
+  "command": "/usr/bin/clang-18 -I/home/mainak/programs/Arena/include -std=gnu90 -o CMakeFiles/arena.dir/lib/arena.c.o -c /home/mainak/programs/Arena/lib/arena.c",
+  "file": "/home/mainak/programs/Arena/lib/arena.c",
+  "output": "/home/mainak/programs/Arena/build/CMakeFiles/arena.dir/lib/arena.c.o"
+}
+]
