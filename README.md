@@ -56,8 +56,6 @@ A lightweight arena-style memory allocator for C projects.
 #include <stdio.h>
 
 int main() {
-	// Normal Arena
-	// --------------------
 	// Initialize the arena
 	Arena *arena = arena_init(20);
 
@@ -68,15 +66,25 @@ int main() {
 	double *num3 = (double *)arena_alloc(arena, sizeof(double));
 	double *num4 = (double *)arena_alloc(arena, sizeof(double));
 
+	printf("Num: %f\n", *num); // 0.000000
+
 	*num = 11.22;
+	*num1 = 2.345;
 
-	printf("Num: %f\n", *num);
+	printf("Num: %f\n", *num); // 11.220000
+	printf("Num1: %f\n", *num1); // 2.345000
 
+	// Reset the arena
 	arena_reset(&arena);
 
 	double *num_new = (double *)arena_alloc(arena, sizeof(double));
 
-	printf("Num_new: %f\n", *num_new);
+	printf("Num_new: %f\n", *num_new); // 0.000000
+
+	*num_new = 4.55;
+
+	printf("Num_new: %f\n", *num_new); // 4.550000
+	printf("Num1: %f\n", *num1); // 0.000000
 
 	// Free the arena
 	arena_free(&arena);

@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef union {
 	char c;
@@ -78,6 +79,8 @@ void *m_align_alloc(size_t capacity) {
 
 	head = (char **)(aligned_ptr - header_size);
 	*head = (char *)origin;
+
+	memset(aligned_ptr, 0, capacity);
 
 	return (void *)aligned_ptr;
 }
@@ -184,4 +187,5 @@ void arena_reset(Arena **arena) {
 	next = (*arena)->next;
 	arena_free(&next);
 	(*arena)->next = NULL;
+	memset((*arena)->region, 0, (*arena)->capacity);
 }
