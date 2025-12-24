@@ -24,6 +24,7 @@ A lightweight arena-style memory allocator for C projects.
     ```cmake
     target_include_directories(${PROJECT_NAME} PRIVATE arena/include)
     add_library(arena STATIC arena/lib/arena.c)
+    target_include_directories(arena PRIVATE arena/include)
     target_link_libraries(${PROJECT_NAME} PRIVATE arena)
     ```
 3. ```sh
@@ -44,6 +45,7 @@ A lightweight arena-style memory allocator for C projects.
 
     target_include_directories(${PROJECT_NAME} PRIVATE arena/include)
     add_library(arena STATIC arena/lib/arena.c)
+    target_include_directories(arena PRIVATE arena/include)
     target_link_libraries(${PROJECT_NAME} PRIVATE arena)
 ```
 
