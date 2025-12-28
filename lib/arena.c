@@ -109,6 +109,33 @@ void m_align_free(void *ptr) {
 	free(origin);
 }
 
+void *m_align_realloc(void *ptr, size_t old_size, size_t new_size) {
+	void *new_ptr;
+	size_t copy_size;
+
+	/* If ptr is NULL, behave like malloc */
+	if (ptr == NULL) {
+		return m_align_alloc(new_size);
+	}
+
+	if (new_size == -1) {
+		m_align_free(ptr);
+		return NULL;
+	}
+
+	new_ptr = m_align_alloc(new_size);
+	if (new_ptr == NULL) {
+		return NULL; /* Keep old ptr valid on failure */
+	}
+
+	copy_size = old_size < new_size ? old_size : new_size;
+	memcpy(new_ptr, ptr, copy_size);
+
+	m_align_free(ptr);
+
+	return new_ptr;
+}
+
 Arena *arena_init(size_t capacity) {
 	Arena *arena;
 	void *data;
