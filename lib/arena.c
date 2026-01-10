@@ -51,7 +51,6 @@ void *m_align_alloc(size_t capacity) {
 	 * need maximum 7 bytes for padding.
 	 * */
 	total_size = capacity + (alignment - 1) + header_size;
-
 	origin = malloc(total_size);
 	if (origin == NULL) {
 		return NULL;
