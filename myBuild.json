@@ -7,7 +7,7 @@
         "include"
     ],
     "src": [
-        "lib/arena.c"
+        "lib"
     ],
     "dependencies": {}
 }
